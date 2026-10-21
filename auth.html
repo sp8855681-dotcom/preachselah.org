@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>Sign in — PreachSelah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-page">
+  <div class="app-splash" id="app-splash" role="status" aria-live="polite">
+    <span class="brand-mark splash-mark">✳</span>
+    <span class="splash-name">Preach<span>Selah</span></span>
+    <span class="splash-caption">A QUIET PLACE TO PREPARE</span>
+    <span class="splash-progress" aria-hidden="true"></span>
+  </div>
+  <header class="site-header auth-header">
+    <a class="brand" href="/" aria-label="PreachSelah sign in"><span class="brand-mark">✳</span><span>Preach<span class="brand-light">Selah</span></span></a>
+    <span class="auth-header-note"><span class="note-dot"></span> A QUIET PLACE TO PREPARE</span>
+  </header>
+  <main class="auth-main">
+    <section class="auth-card">
+      <div class="auth-card-copy">
+        <div class="eyebrow"><span class="eyebrow-line"></span> MAKE A LITTLE ROOM</div>
+        <h1>Come as you are.<br><em>Find your next word.</em></h1>
+        <p>Sign in to find a Scripture starting point, explore the KJV, and make space for the message on your heart.</p>
+        <div class="auth-verse">
+          <span class="auth-verse-mark">“</span>
+          <blockquote>“Be still, and know that I am God.”</blockquote>
+          <span class="daily-reference">PSALM 46:10 · KJV</span>
+        </div>
+        <div class="auth-art" aria-hidden="true">
+          <span class="auth-art-sun"></span>
+          <span class="auth-art-star">✳</span>
+          <div class="auth-art-book"><span>PSALM 46</span><strong>Be still,<br>and know<br>that I am God.</strong></div>
+        </div>
+      </div>
+      <div class="auth-form-panel">
+        <span class="section-index">YOUR QUIET SPACE IS WAITING</span>
+        <h2 id="auth-heading">Welcome back.</h2>
+        <p class="auth-subheading" id="auth-subheading">Sign in with your email to continue.</p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="auth-message auth-message-{{ category }}" role="alert">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <div class="auth-tabs" role="tablist" aria-label="Account options">
+          <button class="auth-tab active" type="button" id="sign-in-tab" role="tab" aria-selected="true" aria-controls="auth-form">Sign in</button>
+          <button class="auth-tab" type="button" id="create-account-tab" role="tab" aria-selected="false" aria-controls="auth-form">Create account</button>
+        </div>
+        <form class="auth-form" id="auth-form" action="{{ url_for('login') }}" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <label for="auth-email">EMAIL ADDRESS</label>
+          <input id="auth-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" maxlength="254" required>
+          <label for="auth-password">PASSWORD</label>
+          <input id="auth-password" name="password" type="password" autocomplete="current-password" placeholder="At least 8 characters" minlength="8" required>
+          <p class="auth-name-note" id="auth-name-note" hidden>Your first name will be taken from your email address for your welcome.</p>
+          <button class="button button-dark auth-submit" id="auth-submit" type="submit">Sign in <span>↗</span></button>
+        </form>
+        <p class="auth-privacy">Your password is stored securely as a hash. Your account stays on this app.</p>
+      </div>
+    </section>
+    <footer class="auth-footer"><span>PREACHSELAH</span><span>Scripture first. Your voice always.</span></footer>
+  </main>
+  <script src="{{ url_for('static', filename='auth.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>Your space — PreachSelah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-page">
+  <header class="site-header dashboard-header">
+    <a class="brand" href="/" aria-label="PreachSelah home"><span class="brand-mark">✳</span><span>Preach<span class="brand-light">Selah</span></span></a>
+    <nav class="top-nav" aria-label="Main navigation"><a href="#topics">Topic finder</a><a href="#bible">Read the Bible</a></nav>
+    <div class="account-menu"><span class="header-status"><span class="note-dot"></span> {{ display_name }}</span><form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="sign-out-button" type="submit">Sign out</button></form></div>
+  </header>
+
+  <main class="dashboard-main">
+    <section class="dashboard-welcome">
+      <div>
+        <div class="eyebrow"><span class="eyebrow-line"></span> A MOMENT TO LISTEN</div>
+        <h1>Good morning, {{ display_name }}.<br><em>let's find a word.</em></h1>
+      </div>
+      <div class="welcome-verse"><span class="section-index">TODAY'S REMINDER</span><p>“The entrance of thy words giveth light; it giveth understanding unto the simple.”</p><span>PSALM 119:130 · KJV</span></div>
+    </section>
+
+    <section class="dashboard-section topic-section" id="topics">
+      <div class="section-heading">
+        <div><span class="section-index">01 — FIND A STARTING POINT</span><h2>What’s on your heart?</h2></div>
+        <div class="topic-actions">
+          <button class="button button-outline" id="reset-topics" type="button">Reset topics <span>↺</span></button>
+          <button class="button button-outline" id="surprise-button" type="button"><span class="shuffle-icon">⤨</span> Surprise me</button>
+        </div>
+      </div>
+      <form class="custom-topic-form" id="custom-topic-form">
+        <label for="custom-topic-input">OR BRING YOUR OWN TOPIC</label>
+        <div class="custom-topic-entry">
+          <input id="custom-topic-input" name="topic" maxlength="120" placeholder="e.g. patience, family, finding purpose…" required>
+          <button class="button button-dark" id="create-topic-button" type="submit">Build my topic <span>↗</span></button>
+        </div>
+        <p class="topic-form-message" id="topic-form-message" role="status" aria-live="polite"></p>
+      </form>
+      <div class="topic-layout">
+        <nav class="topic-list" id="topic-list" aria-label="Sermon topics">
+          {% for topic in topics %}
+          <button class="topic-chip{% if loop.first %} active{% endif %}" type="button" data-topic="{{ loop.index0 }}"><span class="topic-chip-dot"></span>{{ topic.title }}</button>
+          {% endfor %}
+        </nav>
+        <article class="topic-result" aria-live="polite">
+          <div class="result-topline"><span class="topic-category" id="topic-category">{{ topics[0].category }}</span><span class="result-mark">✳</span></div>
+          <h3 id="topic-title">{{ topics[0].title }}</h3>
+          <a class="scripture-reference" id="topic-reference" href="#bible">{{ topics[0].reference }} <span>↗</span></a>
+          <p class="topic-verse" id="topic-verse">“{{ topics[0].verse }}”</p>
+          <div class="hint-block"><span class="hint-label">A THOUGHT TO EXPLORE</span><p id="topic-hint">{{ topics[0].hint }}</p></div>
+          <div class="outline-block"><span class="hint-label">POSSIBLE THREADS</span><ol id="topic-points">{% for point in topics[0].points %}<li>{{ point }}</li>{% endfor %}</ol></div>
+          <div class="result-footer"><span>Let this be a beginning, not the whole message.</span><button class="copy-button" type="button" id="copy-topic">Copy notes <span>⧉</span></button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="dashboard-section bible-section" id="bible">
+      <div class="section-heading bible-heading">
+        <div><span class="section-index">02 — STAY IN THE WORD</span><h2>Open the Bible.</h2></div>
+        <span class="bible-badge"><span class="note-dot"></span> KING JAMES VERSION · KJV</span>
+      </div>
+      <div class="bible-reader">
+        <div class="bible-controls">
+          <label>BOOK<select id="book-select">{% for book, chapters in books %}<option value="{{ book }}" data-chapters="{{ chapters }}">{{ book }}</option>{% endfor %}</select></label>
+          <label>CHAPTER<select id="chapter-select"></select></label>
+          <button class="button button-dark load-chapter" id="load-chapter" type="button">Open chapter <span>↗</span></button>
+        </div>
+        <div class="reader-content" aria-live="polite">
+          <div class="reader-placeholder" id="reader-placeholder"><span class="reader-icon">✳</span><h3>Where would you like to begin?</h3><p>Choose a book and chapter to read. All 66 books are here, from Genesis to Revelation.</p><button class="text-link" id="read-first-chapter" type="button">Start with Genesis 1 <span>→</span></button></div>
+          <div class="reader-loading" id="reader-loading" hidden><span class="loading-spinner"></span><p>Opening the passage…</p></div>
+          <div class="reader-error" id="reader-error" role="alert" hidden></div>
+          <article class="chapter-text" id="chapter-text" hidden><div class="chapter-heading"><span class="section-index">READ & REFLECT</span><h3 id="chapter-title"></h3></div><div id="chapter-verses"></div><div class="chapter-source">King James Version (KJV)</div></article>
+        </div>
+        <div class="reader-bottom"><span>Take your time. Notice what stays with you.</span><span>✳</span></div>
+      </div>
+    </section>
+    <footer class="dashboard-footer"><span>PREACHSELAH</span><span>Scripture first. Your voice always.</span><a href="/">Back to the beginning ↑</a></footer>
+  </main>
+  {% if welcome_name %}
+  <div class="welcome-modal-backdrop" id="welcome-modal" role="presentation">
+    <section class="welcome-modal" role="dialog" aria-modal="true" aria-labelledby="welcome-title" aria-describedby="welcome-description">
+      <button class="welcome-modal-close" id="welcome-close" type="button" aria-label="Close welcome message">×</button>
+      <span class="welcome-modal-mark">✳</span>
+      <span class="section-index">YOUR QUIET SPACE IS READY</span>
+      <h2 id="welcome-title">Welcome, <em>{{ welcome_name }}</em>.</h2>
+      <p id="welcome-description">We’re glad you’re here. Take a breath, explore the Word, and find a starting point for what’s on your heart.</p>
+      <button class="button button-dark" id="welcome-begin" type="button">Let’s begin <span>↗</span></button>
+    </section>
+  </div>
+  {% endif %}
+  <script id="topic-data" type="application/json">{{ topics|tojson }}</script>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

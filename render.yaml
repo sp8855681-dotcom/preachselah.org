@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: preachselah
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    healthCheckPath: /healthz
+    disk:
+      name: preachselah-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: PREACHSELAH_SECRET_KEY
+        generateValue: true
+      - key: PREACHSELAH_DATABASE
+        value: /var/data/accounts.sqlite3
+      - key: PREACHSELAH_COOKIE_SECURE
+        value: "1"
